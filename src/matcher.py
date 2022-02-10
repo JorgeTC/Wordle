@@ -1,11 +1,11 @@
 import concurrent.futures
 from itertools import repeat
-from functools import lru_cache
 
 
 from src.answer import Answer
 from src.leter_state import LeterState
 from src.progress_bar import ProgressBar
+from src.cache_for_colours import cached
 
 # Cargo la lista con todas las palabras
 all_words = open("res/list.txt", "r", encoding="utf-8")
@@ -13,7 +13,6 @@ LINES = all_words.readlines()
 # Elimino los saltos de linea
 LINES = [word[:-1] for word in LINES]
 all_words.close()
-
 
 class Match():
 
@@ -36,7 +35,7 @@ class Match():
         return new_possibles
 
     @classmethod
-    @lru_cache(maxsize=None)
+    @cached
     def count_possibles(cls, answer: Answer) -> int:
 
         count_in_parallel = concurrent.futures.ThreadPoolExecutor(
@@ -80,13 +79,11 @@ class Match():
         punctuation = 0
 
         # Iteremos todas las posibles respuestas
-        executor = concurrent.futures.ThreadPoolExecutor(
-            max_workers=100, thread_name_prefix=f"Punctuation for {word}")
-        punctuation = sum(list(executor.map(
-            cls.punctuation_for_word_and_target, repeat(answer), cls.possibles)))
+        for word in cls.possibles:
+            punctuation += cls.punctuation_for_word_and_target(answer, word)
 
         # He cambiado de palabra, luego el patrón de colores cambia su significado
-        cls.count_possibles.cache_clear()
+        cls.count_possibles.cache_reset()
 
         # Hago una media y la devuelvo
         return punctuation/len(cls.possibles)
