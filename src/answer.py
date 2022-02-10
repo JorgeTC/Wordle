@@ -3,7 +3,7 @@ from src.leter_state import LeterState
 
 class Answer():
 
-    def __init__(self, word: str, colors: str="") -> None:
+    def __init__(self, word: str, colors: str="00000") -> None:
         self.word = word.lower()
         self.colors = self.str_to_colors(colors)
         self.required_letters = self.def_required_place_letters()
