@@ -17,6 +17,7 @@ class Match():
     # Palabras posibles, actualizaré esta lista
     possibles = LINES.copy()
 
+    count_in_parallel = concurrent.futures.ThreadPoolExecutor(max_workers=100)
 
     @classmethod
     def get_possibles(cls, answer: Answer):
@@ -44,6 +45,51 @@ class Match():
     def print(cls):
         for word in cls.possibles:
             print(word)
+
+    @classmethod
+    def suggestion(cls):
+
+        suggestion = ""
+        min_punctuation = len(LINES)
+
+        # Itero todas las palabras que me permite el juego
+        for word in LINES:
+
+            # Evalúo la palabra
+            curr_punctuation = cls.punctuation_for_word(word)
+
+            # Si la palabra me descarta más elementos, la tomo como nueva sugerencia
+            if curr_punctuation < min_punctuation:
+                suggestion = word
+                min_punctuation = curr_punctuation
+
+        return suggestion
+
+    @classmethod
+    def punctuation_for_word(cls, word):
+
+        answer = Answer(word)
+        punctuation = 0
+
+        # Iteremos todas las posibles respuestas
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+        punctuation = sum(list(executor.map(
+            cls.punctuation_for_word_and_target, repeat(answer), cls.possibles)))
+        # for target in cls.possibles:
+        #     punctuation += cls.punctuation_for_word_and_target(answer, target)
+
+        # Hago una media y la devuelvo
+        return punctuation/len(cls.possibles)
+
+    @classmethod
+    def punctuation_for_word_and_target(cls, answer: Answer, target: str):
+        # Coloreemos la palabra con el target actual
+        answer.colors = answer.colorize_word(target)
+        answer.required_letters = answer.def_required_place_letters()
+        answer.not_pressent_letters = answer.def_not_pressent_letters()
+
+        # Dada esa respuesta, obtengamos cuántas palabras válidas existen
+        return cls.count_possibles(answer)
 
 
 def possible_word(word: str, answer: Answer):
