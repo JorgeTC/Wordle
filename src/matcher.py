@@ -1,5 +1,7 @@
 import concurrent.futures
 from itertools import repeat
+from functools import lru_cache
+
 
 from src.answer import Answer
 from src.leter_state import LeterState
@@ -34,6 +36,7 @@ class Match():
         return new_possibles
 
     @classmethod
+    @lru_cache(maxsize=None)
     def count_possibles(cls, answer: Answer) -> int:
 
         count_in_parallel = concurrent.futures.ThreadPoolExecutor(
@@ -81,6 +84,9 @@ class Match():
             max_workers=100, thread_name_prefix=f"Punctuation for {word}")
         punctuation = sum(list(executor.map(
             cls.punctuation_for_word_and_target, repeat(answer), cls.possibles)))
+
+        # He cambiado de palabra, luego el patrón de colores cambia su significado
+        cls.count_possibles.cache_clear()
 
         # Hago una media y la devuelvo
         return punctuation/len(cls.possibles)
