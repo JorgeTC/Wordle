@@ -17,9 +17,9 @@ class Match():
     # Palabras posibles, actualizaré esta lista
     possibles = LINES.copy()
 
-    @classmethod
-    def update_possibles(cls, answer: Answer):
 
+    @classmethod
+    def get_possibles(cls, answer: Answer):
         new_possibles = []
 
         for word in cls.possibles:
@@ -29,7 +29,16 @@ class Match():
 
             new_possibles.append(word)
 
-        cls.possibles = new_possibles
+        return new_possibles
+
+    @classmethod
+    def count_possibles(cls, answer: Answer) -> int:
+
+        count_in_parallel = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+        counter = sum(
+            list(count_in_parallel.map(possible_word, cls.possibles, repeat(answer))))
+
+        return counter
 
     @classmethod
     def print(cls):
