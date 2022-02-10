@@ -1,16 +1,17 @@
 import re
 
 from src.answer import Answer
-from src.matcher import Match
+from src.matcher import Match, LINES
 
 
 def main():
 
     while len(Match.possibles) > 1:
+        print(Match.suggestion())
         inserted_word = ask_for_word()
         color_pattern = ask_for_pattern()
         answer = Answer(inserted_word, color_pattern)
-        Match.update_possibles(answer)
+        Match.possibles = Match.get_possibles(answer)
         Match.print()
 
 
@@ -18,10 +19,10 @@ def ask_for_word():
 
     while True:
         # Pido al usuario
-        ans = input("Palabra introducida ")
+        ans = input("Palabra introducida ").lower()
 
         # Compruebo que la palabra introducida esté aceptada por Wordle
-        if ans not in Match.lines:
+        if ans not in LINES:
             continue
 
         # La palabra es correcta
