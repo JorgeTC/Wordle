@@ -1,17 +1,21 @@
-from src.leter_state import LeterState
+import concurrent.futures
+from itertools import repeat
+
 from src.answer import Answer
+from src.leter_state import LeterState
+
+# Cargo la lista con todas las palabras
+all_words = open("res/list.txt", "r", encoding="utf-8")
+LINES = all_words.readlines()
+# Elimino los saltos de linea
+LINES = [word[:-1] for word in LINES]
+all_words.close()
 
 
 class Match():
 
-    # Cargo la lista con todas las palabras
-    all_words = open("res/list.txt", "r", encoding="utf-8")
-    lines = all_words.readlines()
-    # Elimino los saltos de linea
-    lines = [word[:-1] for word in lines]
     # Palabras posibles, actualizaré esta lista
-    possibles = lines.copy()
-    all_words.close()
+    possibles = LINES.copy()
 
     @classmethod
     def update_possibles(cls, answer: Answer):
