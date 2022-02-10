@@ -3,7 +3,7 @@ from src.leter_state import LeterState
 
 class Answer():
 
-    def __init__(self, word: str, colors: str) -> None:
+    def __init__(self, word: str, colors: str="") -> None:
         self.word = word.lower()
         self.colors = self.str_to_colors(colors)
         self.required_letters = self.def_required_place_letters()
@@ -34,3 +34,32 @@ class Answer():
     def str_to_colors(self, colors):
 
         return [LeterState(int(char)) for char in colors]
+
+    def colorize_word(self, target):
+
+        # Incializo una lista para guardar los colores
+        colors = [LeterState.GREY] * 5
+
+        not_green = set()
+        # Escribo las letras acertadas
+        for index, letter in enumerate(target):
+
+            # Se ha acertado la letra, escribo un verde
+            if letter == self.word[index]:
+                colors[index] = LeterState.GREEN
+
+            # En caso contrario la guardo como letra por adivinar
+            not_green.add(letter)
+
+        # Escribo las letras amarillas
+        for index, letter in enumerate(self.word):
+
+            # Si ya lo he pintado de verde, no hago nada más
+            if colors[index] == LeterState.GREEN:
+                continue
+
+            # Si aún es gris, miro si es una letra que esté en la palabra
+            if letter in not_green:
+                colors[index] = LeterState.YELLOW
+
+        return colors
