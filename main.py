@@ -19,7 +19,7 @@ def ask_for_word():
 
     while True:
         # Pido al usuario
-        ans = input("Palabra introducida ")
+        ans = input("Palabra introducida ").lower()
 
         # Compruebo que la palabra introducida esté aceptada por Wordle
         if ans not in LINES:
