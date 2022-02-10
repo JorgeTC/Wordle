@@ -35,7 +35,8 @@ class Match():
     @classmethod
     def count_possibles(cls, answer: Answer) -> int:
 
-        count_in_parallel = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+        count_in_parallel = concurrent.futures.ThreadPoolExecutor(
+            max_workers=100, thread_name_prefix=f"Count_possibles for ans {answer.word}")
         counter = sum(
             list(count_in_parallel.map(possible_word, cls.possibles, repeat(answer))))
 
@@ -66,17 +67,16 @@ class Match():
         return suggestion
 
     @classmethod
-    def punctuation_for_word(cls, word):
+    def punctuation_for_word(cls, word: str):
 
         answer = Answer(word)
         punctuation = 0
 
         # Iteremos todas las posibles respuestas
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers=100)
+        executor = concurrent.futures.ThreadPoolExecutor(
+            max_workers=100, thread_name_prefix=f"Punctuation for {word}")
         punctuation = sum(list(executor.map(
             cls.punctuation_for_word_and_target, repeat(answer), cls.possibles)))
-        # for target in cls.possibles:
-        #     punctuation += cls.punctuation_for_word_and_target(answer, target)
 
         # Hago una media y la devuelvo
         return punctuation/len(cls.possibles)
