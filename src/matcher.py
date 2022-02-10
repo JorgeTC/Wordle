@@ -106,6 +106,10 @@ def possible_word(word: str, answer: Answer):
         if answer.colors[index] == LeterState.GREEN and letter != answer.word[index]:
             return False
 
+        # Sé que en esta posición, la letra es incorrecta
+        if answer.colors[index] == LeterState.YELLOW and letter == answer.word[index]:
+            return False
+
         # Elimino la letra actual del conjunto
         required_letters.discard(letter)
 
