@@ -1,7 +1,7 @@
 import re
 
 from src.answer import Answer
-from src.matcher import Match
+from src.matcher import Match, LINES
 
 
 def main():
@@ -22,7 +22,7 @@ def ask_for_word():
         ans = input("Palabra introducida ")
 
         # Compruebo que la palabra introducida esté aceptada por Wordle
-        if ans not in Match.lines:
+        if ans not in LINES:
             continue
 
         # La palabra es correcta

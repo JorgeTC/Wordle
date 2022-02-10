@@ -3,6 +3,7 @@ from itertools import repeat
 
 from src.answer import Answer
 from src.leter_state import LeterState
+from src.progress_bar import ProgressBar
 
 # Cargo la lista con todas las palabras
 all_words = open("res/list.txt", "r", encoding="utf-8")
@@ -54,7 +55,8 @@ class Match():
         min_punctuation = len(LINES)
 
         # Itero todas las palabras que me permite el juego
-        for word in LINES:
+        bar = ProgressBar()
+        for index, word in enumerate(cls.possibles):
 
             # Evalúo la palabra
             curr_punctuation = cls.punctuation_for_word(word)
@@ -63,6 +65,8 @@ class Match():
             if curr_punctuation < min_punctuation:
                 suggestion = word
                 min_punctuation = curr_punctuation
+
+            bar.update((index+1)/len(cls.possibles))
 
         return suggestion
 
