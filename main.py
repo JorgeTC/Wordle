@@ -7,12 +7,12 @@ from src.matcher import Match, LINES
 def main():
 
     while len(Match.possibles) > 1:
-        print(Match.suggestion())
         inserted_word = ask_for_word()
         color_pattern = ask_for_pattern()
         answer = Answer(inserted_word, color_pattern)
         Match.possibles = Match.get_possibles(answer)
         Match.print()
+        print(Match.suggestion())
 
 
 def ask_for_word():
